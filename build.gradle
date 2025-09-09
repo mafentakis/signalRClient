@@ -18,7 +18,7 @@ application {
 }
 
 tasks.register('fatJar', Jar) {
-    archiveBaseName.set('signarRSubscribe')
+    archiveBaseName.set('signalRSubscribe')
     archiveClassifier.set('')
     archiveVersion.set('')
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

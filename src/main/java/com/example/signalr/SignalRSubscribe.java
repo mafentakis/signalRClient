@@ -3,8 +3,8 @@ package com.example.signalr;
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
@@ -27,8 +27,11 @@ public class SignalRSubscribe {
         }
 
         try {
-            new URL(url);
-        } catch (MalformedURLException e) {
+            URI uri = new URI(url);
+            if (uri.getScheme() == null || uri.getHost() == null) {
+                throw new URISyntaxException(url, "Missing scheme or host");
+            }
+        } catch (URISyntaxException e) {
             System.err.println("Invalid URL: " + url);
             System.exit(1);
         }

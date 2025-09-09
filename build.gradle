@@ -1,0 +1,33 @@
+plugins {
+    id 'application'
+}
+
+group = 'com.example'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.microsoft.signalr:signalr:8.0.0'
+}
+
+application {
+    mainClass = 'com.example.signalr.SignalRSubscribe'
+}
+
+tasks.register('fatJar', Jar) {
+    archiveBaseName.set('signalRSubscribe')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude('META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}

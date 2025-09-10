@@ -25,8 +25,8 @@ that runs a lightweight .NET SignalR server for testing. The server exposes a
 hub at `/hub` on port `8080` and broadcasts `RandomText` events with random
 strings every 2–5 seconds.
 
-The container environment is based on Ubuntu and uses devcontainer features to
-install Java 17 and Gradle for building the client.
+The container environment is based on Ubuntu and installs Java 17 and Gradle
+for building the client.
 
 The development environment is defined in `.devcontainer/` and can be used with
 the VS Code Dev Containers extension or GitHub Codespaces.

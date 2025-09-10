@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java'
 }
 
 group = 'com.example'
@@ -13,8 +13,11 @@ dependencies {
     implementation 'com.microsoft.signalr:signalr:8.0.0'
 }
 
-application {
-    mainClass = 'com.example.signalr.SignalRSubscribe'
+def mainClass = 'com.example.signalr.SignalRSubscribe'
+
+tasks.register('run', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set(mainClass)
 }
 
 tasks.register('fatJar', Jar) {
@@ -24,7 +27,7 @@ tasks.register('fatJar', Jar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude('META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
     manifest {
-        attributes 'Main-Class': application.mainClass.get()
+        attributes 'Main-Class': mainClass
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

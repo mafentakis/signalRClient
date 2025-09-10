@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/base:ubuntu
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    networks:
+      - dev
+  signalr-server:
+    build:
+      context: ./signalr-server
+    ports:
+      - "8080:8080"
+    networks:
+      - dev
+networks:
+  dev:
+    driver: bridge

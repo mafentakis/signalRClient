@@ -6,14 +6,14 @@ Utility that connects to a SignalR hub and prints events.
 ```
 gradle fatJar --console=plain
 ```
-The jar is created at `build/libs/signarRSubscribe.jar`.
+The jar is created at `build/libs/signalRSubscribe.jar`.
 The project expects Gradle and a Java 17 JDK to be available on the PATH.
 The included development container installs both tools so a wrapper script
 is not required.
 
 ## Run
 ```
-java -jar build/libs/signarRSubscribe.jar http://localhost:8080/hub events=EventA,EventB
+java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub events=EventA,EventB
 ```
 - `http://localhost:8080/hub`: URL of the test hub exposed by the dev container
 - `events=...`: comma-separated list of event names to subscribe to

@@ -9,22 +9,38 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'com.microsoft.signalr:signalr:8.0.0'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
 }
 
 def clientMainClass = 'com.example.signalr.SignalRSubscribe'
 def serverMainClass = 'com.example.signalr.SignalRServer'
 
-tasks.create('runClient', JavaExec) {
+dependencies {
+    implementation 'com.microsoft.signalr:signalr:8.0.0'
+}
+
+tasks.withType(JavaExec).configureEach {
     group = 'application'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.create('runClient', JavaExec) {
     description = 'Runs the SignalR subscriber client.'
     classpath = sourceSets.main.runtimeClasspath
     mainClass.set(clientMainClass)
 }
 
 tasks.create('runServer', JavaExec) {
-    group = 'application'
     description = 'Runs the in-process SignalR-compatible test server.'
     classpath = sourceSets.main.runtimeClasspath
     mainClass.set(serverMainClass)

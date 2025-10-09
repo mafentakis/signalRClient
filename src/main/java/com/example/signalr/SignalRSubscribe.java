@@ -7,36 +7,34 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 /**
  * Simple utility that connects to a SignalR hub and subscribes to events.
  */
 public class SignalRSubscribe {
     public static void main(String[] args) throws InterruptedException {
-        if (args.length < 2) {
-            System.err.println("Usage: java -jar signalRSubscribe.jar <url> events=EventA,EventB");
-            System.exit(1);
-        }
+        String defaultUrl = SignalRServer.BASE_HTTP_URL;
+        String defaultEvents = "EventA,EventB";
 
-        String url = args[0];
-        String eventsArg = args[1];
+        String url = args.length > 0 ? args[0] : defaultUrl;
+        String eventsArg = args.length > 1 ? args[1] : "events=" + defaultEvents;
 
         if (!eventsArg.startsWith("events=") || eventsArg.substring("events=".length()).isEmpty()) {
             System.err.println("Event list missing. Provide events=EventA,EventB");
             System.exit(1);
         }
 
-        try {
-            URI uri = new URI(url);
-            if (uri.getScheme() == null || uri.getHost() == null) {
-                throw new URISyntaxException(url, "Missing scheme or host");
-            }
-        } catch (URISyntaxException e) {
-            System.err.println("Invalid URL: " + url);
+        validateUrl(url);
+
+        String[] events = eventsArg.substring("events=".length()).split(",");
+        String eventList = Arrays.stream(events).map(String::trim).filter(e -> !e.isEmpty())
+                .collect(Collectors.joining(", "));
+        if (eventList.isEmpty()) {
+            System.err.println("No valid events supplied.");
             System.exit(1);
         }
 
-        String[] events = eventsArg.substring("events=".length()).split(",");
         HubConnection hubConnection = HubConnectionBuilder.create(url).build();
 
         hubConnection.onClosed(error -> {
@@ -47,10 +45,14 @@ public class SignalRSubscribe {
             }
         });
 
-        Arrays.stream(events).forEach(event ->
-                hubConnection.on(event, (Object message) -> System.out.println(event + ": " + message), Object.class)
-        );
+        Arrays.stream(events)
+                .map(String::trim)
+                .filter(event -> !event.isEmpty())
+                .forEach(event ->
+                        hubConnection.on(event, (Object message) -> System.out.println(event + ": " + message), Object.class)
+                );
 
+        System.out.println("Listening for events [" + eventList + "]");
         System.out.println("Connecting to " + url + "...");
         try {
             hubConnection.start().blockingAwait();
@@ -61,5 +63,17 @@ public class SignalRSubscribe {
         }
 
         new CountDownLatch(1).await();
+    }
+
+    private static void validateUrl(String url) {
+        try {
+            URI uri = new URI(url);
+            if (uri.getScheme() == null || uri.getHost() == null) {
+                throw new URISyntaxException(url, "Missing scheme or host");
+            }
+        } catch (URISyntaxException e) {
+            System.err.println("Invalid URL: " + url);
+            System.exit(1);
+        }
     }
 }

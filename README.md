@@ -15,7 +15,8 @@ with:
 gradle fatJar --console=plain
 ```
 
-The project expects Gradle and a Java 17 JDK to be available on the `PATH`.
+The project targets Java 21. Use the included dev container (Java 21 base
+image) or ensure that Java 21 and Gradle are available on the `PATH`.
 
 ## Run
 Start the in-process test server (listening on port 8080):
@@ -24,19 +25,26 @@ Start the in-process test server (listening on port 8080):
 gradle runServer --console=plain
 ```
 
-Run the client against the local server:
+Run the client against the local server (defaults to `http://localhost:8080` and
+`EventA,EventB` when no arguments are supplied):
 
 ```
-gradle runClient --args='http://localhost:8080/hub events=EventA,EventB' --console=plain
+gradle runClient --console=plain
+```
+
+Pass custom arguments if needed:
+
+```
+gradle runClient --args='http://localhost:8080 events=EventA,EventB' --console=plain
 ```
 
 Alternatively, execute the fat jar directly once built:
 ```
-java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub events=EventA,EventB
+java -jar build/libs/signalRSubscribe.jar http://localhost:8080 events=EventA,EventB
 ```
-- `http://localhost:8080/hub`: URL of the test hub exposed by the bundled
+- `http://localhost:8080`: URL of the test hub exposed by the bundled
   server
 - `events=...`: comma-separated list of event names to subscribe to
 
-The server broadcasts a random payload on either `EventA` or `EventB` every
-2–5 seconds.
+The server logs the negotiation endpoint and WebSocket URL at startup and
+broadcasts a random payload on either `EventA` or `EventB` every 2–5 seconds.

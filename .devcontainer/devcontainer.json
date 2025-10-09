@@ -1,0 +1,17 @@
+{
+  "name": "signalRClient",
+  "image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
+  "postCreateCommand": "gradle --version || true",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "java.configuration.runtimes": [
+          {
+            "name": "JavaSE-21",
+            "path": "/usr/lib/jvm/msopenjdk-21"
+          }
+        ]
+      }
+    }
+  }
+}

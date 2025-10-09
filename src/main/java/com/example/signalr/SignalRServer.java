@@ -27,7 +27,10 @@ import java.util.concurrent.TimeUnit;
  * emits EventA/EventB messages every few seconds.
  */
 public final class SignalRServer {
-    private static final int PORT = 8080;
+    public static final int PORT = 8080;
+    private static final String HOST = "localhost";
+    public static final String BASE_HTTP_URL = "http://" + HOST + ":" + PORT;
+    public static final String WEBSOCKET_URL = "ws://" + HOST + ":" + PORT + "/";
     private static final GsonHubProtocol HUB_PROTOCOL = new GsonHubProtocol();
     private static final byte[] HANDSHAKE_ACK = "{}\u001e".getBytes(StandardCharsets.UTF_8);
     private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
@@ -39,6 +42,8 @@ public final class SignalRServer {
 
     public static void main(String[] args) throws IOException {
         System.out.println("Starting Java SignalR test server on port " + PORT);
+        System.out.println("Negotiation endpoint: " + BASE_HTTP_URL + "/negotiate");
+        System.out.println("WebSocket endpoint: " + WEBSOCKET_URL);
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
                 Socket socket = serverSocket.accept();

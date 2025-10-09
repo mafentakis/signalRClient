@@ -1,0 +1,8 @@
+{
+  "name": "signalRClient",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [8080],
+  "shutdownAction": "stopCompose"
+}

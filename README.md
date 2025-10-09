@@ -22,8 +22,9 @@ java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub events=Event
 
 This project includes a VS Code [dev container](https://containers.dev/) setup
 that runs a lightweight Java-based SignalR-compatible server for testing. The
-server exposes a hub at `/hub` on port `8080` and broadcasts random `EventA` and
-`EventB` messages every 2–5 seconds.
+sidecar is built with Gradle and uses the `com.microsoft.signalr:signalr:8.0.0`
+library to encode hub messages. The server exposes a hub at `/hub` on port
+`8080` and broadcasts random `EventA` and `EventB` messages every 2–5 seconds.
 
 The container environment is based on Ubuntu and installs Java 17 and Gradle
 for building the client.

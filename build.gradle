@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java'
 }
 
 group = 'com.example'
@@ -13,18 +13,31 @@ dependencies {
     implementation 'com.microsoft.signalr:signalr:8.0.0'
 }
 
-application {
-    mainClass = 'com.example.signalr.SignalRSubscribe'
+def clientMainClass = 'com.example.signalr.SignalRSubscribe'
+def serverMainClass = 'com.example.signalr.SignalRServer'
+
+tasks.create('runClient', JavaExec) {
+    group = 'application'
+    description = 'Runs the SignalR subscriber client.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set(clientMainClass)
 }
 
-tasks.register('fatJar', Jar) {
+tasks.create('runServer', JavaExec) {
+    group = 'application'
+    description = 'Runs the in-process SignalR-compatible test server.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set(serverMainClass)
+}
+
+tasks.create('fatJar', Jar) {
     archiveBaseName.set('signalRSubscribe')
     archiveClassifier.set('')
     archiveVersion.set('')
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude('META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
     manifest {
-        attributes 'Main-Class': application.mainClass.get()
+        attributes 'Main-Class': clientMainClass
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

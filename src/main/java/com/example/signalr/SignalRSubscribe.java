@@ -14,7 +14,7 @@ import java.util.concurrent.CountDownLatch;
 public class SignalRSubscribe {
     public static void main(String[] args) throws InterruptedException {
         if (args.length < 2) {
-            System.err.println("Usage: java -jar signarRSubscribe.jar <url> events=EventA,EventB");
+            System.err.println("Usage: java -jar signalRSubscribe.jar <url> events=EventA,EventB");
             System.exit(1);
         }
 

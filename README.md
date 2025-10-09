@@ -13,7 +13,7 @@ is not required.
 
 ## Run
 ```
-java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub events=RandomText
+java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub events=EventA,EventB
 ```
 - `http://localhost:8080/hub`: URL of the test hub exposed by the dev container
 - `events=...`: comma-separated list of event names to subscribe to
@@ -21,9 +21,9 @@ java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub events=Rando
 ## Development container
 
 This project includes a VS Code [dev container](https://containers.dev/) setup
-that runs a lightweight .NET SignalR server for testing. The server exposes a
-hub at `/hub` on port `8080` and broadcasts `RandomText` events with random
-strings every 2–5 seconds.
+that runs a lightweight Java-based SignalR-compatible server for testing. The
+server exposes a hub at `/hub` on port `8080` and broadcasts random `EventA` and
+`EventB` messages every 2–5 seconds.
 
 The container environment is based on Ubuntu and installs Java 17 and Gradle
 for building the client.

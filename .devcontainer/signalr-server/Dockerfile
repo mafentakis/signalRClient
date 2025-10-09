@@ -1,13 +1,11 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY SignalRServer.csproj .
-RUN dotnet restore
-COPY . .
-RUN dotnet publish -c Release -o /app
+# syntax=docker/dockerfile:1
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
-COPY --from=build /app .
-ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 8080
-ENTRYPOINT ["dotnet", "SignalRServer.dll"]
+COPY SignalRServer.java .
+RUN javac SignalRServer.java
+
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=build /app/SignalRServer.class ./
+CMD ["java", "SignalRServer"]

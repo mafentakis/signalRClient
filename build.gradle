@@ -13,11 +13,11 @@ dependencies {
     implementation 'com.microsoft.signalr:signalr:8.0.0'
 }
 
-def mainClass = 'com.example.signalr.SignalRSubscribe'
+def mainClassName = 'com.example.signalr.SignalRSubscribe'
 
 tasks.register('run', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClass)
+    mainClass.set(mainClassName)
 }
 
 tasks.register('fatJar', Jar) {
@@ -27,7 +27,7 @@ tasks.register('fatJar', Jar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude('META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
     manifest {
-        attributes 'Main-Class': mainClass
+        attributes 'Main-Class': mainClassName
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

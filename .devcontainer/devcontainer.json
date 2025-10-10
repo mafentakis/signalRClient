@@ -1,8 +1,11 @@
 {
   "name": "signalRClient",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
-  "workspaceFolder": "/workspace",
-  "forwardPorts": [8080],
-  "shutdownAction": "stopCompose"
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "installGradle": true
+    },
+    "ghcr.io/devcontainers/features/docker-from-docker:2": {}
+  }
 }

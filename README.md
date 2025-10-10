@@ -15,7 +15,7 @@ Server will be available at `http://localhost:5000/eventhub`
 ### 2. Build and Run the Java Client
 
 ```bash
-./gradlew fatJar && java -jar build/libs/signalRSubscribe.jar http://localhost:5000/eventhub events=EventA,EventB
+gradle fatJar && java -jar build/libs/signalRSubscribe.jar http://localhost:5000/eventhub events=EventA,EventB
 ```
 
 ### 3. Stop the Server

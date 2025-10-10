@@ -2,6 +2,10 @@
 
 Utility that connects to a SignalR hub and prints events.
 
+The repository now also contains a minimal ASP.NET Core SignalR server that
+emits `EventA` and `EventB` payloads every second. You can run it via Docker
+and use this client to observe the traffic.
+
 ## Build
 ```
 gradle fatJar --console=plain
@@ -13,21 +17,31 @@ is not required.
 
 ## Run
 ```
-java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub events=EventA,EventB
+java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub/events
+java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub/events events=EventA,EventB
 ```
-- `http://localhost:8080/hub`: URL of the test hub exposed by the dev container
-- `events=...`: comma-separated list of event names to subscribe to
+- `http://localhost:8080/hub/events`: URL of the SignalR hub endpoint
+- `events=...`: optional comma-separated list of event names to subscribe to
+  (defaults to `EventA,EventB` if omitted)
 
-## Development container
+Use `Ctrl+C` to stop the client gracefully.
 
-This project includes a VS Code [dev container](https://containers.dev/) setup
-that runs a lightweight Java-based SignalR-compatible server for testing. The
-sidecar is built with Gradle and uses the `com.microsoft.signalr:signalr:8.0.0`
-library to encode hub messages. The server exposes a hub at `/hub` on port
-`8080` and broadcasts random `EventA` and `EventB` messages every 2–5 seconds.
+## Sample SignalR server (Docker)
 
-The container environment is based on Ubuntu and installs Java 17 and Gradle
-for building the client.
+The `server/` directory provides a small ASP.NET Core server that continuously
+emits `EventA` and `EventB` payloads. You can run it locally with Docker:
 
-The development environment is defined in `.devcontainer/` and can be used with
-the VS Code Dev Containers extension or GitHub Codespaces.
+```
+cd server
+docker compose up --build
+```
+
+The server listens on `http://localhost:8080/hub/events`. With the container
+running you can connect the Java client from another terminal:
+
+```
+./gradlew fatJar
+java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub/events
+```
+
+Press `Ctrl+C` in both terminals to stop the client and server.

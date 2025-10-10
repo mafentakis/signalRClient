@@ -1,33 +1,101 @@
 # SignalRSubscribe
 
-Utility that connects to a SignalR hub and prints events.
+Java SignalR client that connects to a SignalR hub and subscribes to events.
 
-## Build
+## Quick Start
+
+### 1. Start the .NET SignalR Server (Docker)
+
+```bash
+docker-compose -f server/docker-compose.yml up --build -d
 ```
-gradle fatJar --console=plain
+
+Server will be available at `http://localhost:5000/eventhub`
+
+### 2. Build and Run the Java Client
+
+```bash
+./gradlew fatJar && java -jar build/libs/signalRSubscribe.jar http://localhost:5000/eventhub events=EventA,EventB
 ```
-The jar is created at `build/libs/signalRSubscribe.jar`.
-The project expects Gradle and a Java 17 JDK to be available on the PATH.
-The included development container installs both tools so a wrapper script
-is not required.
 
-## Run
+### 3. Stop the Server
+
+```bash
+docker-compose -f server/docker-compose.yml down
 ```
-java -jar build/libs/signalRSubscribe.jar http://localhost:8080/hub events=EventA,EventB
+
+## Expected Output
+
+**Client:**
 ```
-- `http://localhost:8080/hub`: URL of the test hub exposed by the dev container
-- `events=...`: comma-separated list of event names to subscribe to
+Connecting to http://localhost:5000/eventhub...
+Connected to http://localhost:5000/eventhub
+EventA: EventA message #1 at 14:23:45
+EventB: EventB message #1 at 14:23:46
+EventA: EventA message #2 at 14:23:47
+EventB: EventB message #2 at 14:23:48
+...
+```
 
-## Development container
+## Usage
 
-This project includes a VS Code [dev container](https://containers.dev/) setup
-that runs a lightweight Java-based SignalR-compatible server for testing. The
-sidecar is built with Gradle and uses the `com.microsoft.signalr:signalr:8.0.0`
-library to encode hub messages. The server exposes a hub at `/hub` on port
-`8080` and broadcasts random `EventA` and `EventB` messages every 2–5 seconds.
+```bash
+java -jar build/libs/signalRSubscribe.jar <url> events=<event1>,<event2>,...
+```
 
-The container environment is based on Ubuntu and installs Java 17 and Gradle
-for building the client.
+**Arguments:**
+- `<url>` - SignalR hub URL (e.g., `http://localhost:5000/eventhub`)
+- `events=...` - Comma-separated list of event names to subscribe to
 
-The development environment is defined in `.devcontainer/` and can be used with
-the VS Code Dev Containers extension or GitHub Codespaces.
+**Examples:**
+```bash
+# Subscribe to multiple events
+java -jar build/libs/signalRSubscribe.jar http://localhost:5000/eventhub events=EventA,EventB
+
+# Subscribe to single event
+java -jar build/libs/signalRSubscribe.jar http://localhost:5000/eventhub events=EventA
+```
+
+## Project Structure
+
+```
+├── src/main/java/com/example/signalr/
+│   └── SignalRSubscribe.java          # Java SignalR client
+├── server/
+│   ├── SignalRServer/
+│   │   ├── Program.cs                 # Server entry point
+│   │   ├── Hubs/EventHub.cs           # SignalR hub
+│   │   ├── EventEmitterService.cs     # Emits EventA/EventB every second
+│   │   └── SignalRServer.csproj       # .NET 8 project
+│   ├── Dockerfile                     # Docker image
+│   └── docker-compose.yml             # Docker Compose config
+└── build.gradle                       # Gradle build config
+```
+
+## Server Details
+
+- **Port:** 5000
+- **Hub Endpoint:** `/eventhub`
+- **Events:** Emits `EventA` and `EventB` alternately every second
+- **Technology:** .NET 8 SignalR with Docker
+
+## Requirements
+
+- **Docker & Docker Compose** (for server)
+- **Java 17+** (for client)
+- **Gradle** (included wrapper)
+
+## Development Container
+
+This project includes a VS Code [dev container](https://containers.dev/) with:
+- ✅ Java 21
+- ✅ Gradle
+- ✅ Docker-in-Docker (for running the SignalR server)
+- ✅ Java extensions for VS Code
+
+**To use:**
+1. Install [VS Code](https://code.visualstudio.com/) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+2. Open this project in VS Code
+3. Click "Reopen in Container" when prompted (or use Command Palette: `Dev Containers: Reopen in Container`)
+4. All tools will be pre-installed and ready to use
+

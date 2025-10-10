@@ -31,14 +31,6 @@
     }
   },
 
-  "forwardPorts": [5000],
-  "portsAttributes": {
-    "5000": {
-      "label": "SignalR Server",
-      "onAutoForward": "notify"
-    }
-  },
-
   "postCreateCommand": "java -version && gradle -version && docker --version",
 
   "remoteUser": "vscode"

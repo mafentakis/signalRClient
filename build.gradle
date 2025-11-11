@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation 'com.microsoft.signalr:signalr:8.0.0'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
 }
 
 def mainClassName = 'com.example.signalr.SignalRSubscribe'
@@ -28,6 +29,21 @@ tasks.register('fatJar', Jar) {
     exclude('META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
     manifest {
         attributes 'Main-Class': mainClassName
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+tasks.register('mqttBridgeJar', Jar) {
+    archiveBaseName.set('MQTTBridge')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude('META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    manifest {
+        attributes 'Main-Class': 'com.example.signalr.MQTTBridge'
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

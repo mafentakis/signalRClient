@@ -2,6 +2,8 @@
 
 Java SignalR client that connects to a SignalR hub and subscribes to events.
 
+Includes an **MQTT Bridge** that forwards SignalR events to an MQTT broker.
+
 ## Quick Start
 
 ### 1. Start the .NET SignalR Server (Docker)
@@ -39,6 +41,8 @@ EventB: EventB message #2 at 14:23:48
 
 ## Usage
 
+### SignalR Subscribe Client
+
 ```bash
 java -jar build/libs/signalRSubscribe.jar <url> events=<event1>,<event2>,...
 ```
@@ -56,11 +60,52 @@ java -jar build/libs/signalRSubscribe.jar http://localhost:5000/eventhub events=
 java -jar build/libs/signalRSubscribe.jar http://localhost:5000/eventhub events=EventA
 ```
 
+### MQTT Bridge
+
+The MQTT Bridge subscribes to SignalR events and publishes them to an MQTT broker.
+
+**Build:**
+```bash
+gradle mqttBridgeJar
+```
+
+**Run:**
+```bash
+java -jar build/libs/MQTTBridge.jar <signalr-url> events=<event1>,<event2> <mqtt-broker-url> [mqtt-client-id]
+```
+
+**Arguments:**
+- `<signalr-url>` - SignalR hub URL (e.g., `http://localhost:5000/eventhub`)
+- `events=...` - Comma-separated list of event names to subscribe to
+- `<mqtt-broker-url>` - MQTT broker URL (e.g., `tcp://localhost:1883`)
+- `[mqtt-client-id]` - Optional MQTT client ID (default: `mqtt-bridge-<timestamp>`)
+
+**Example:**
+```bash
+# Start MQTT broker (using Mosquitto)
+docker run -d -p 1883:1883 -p 9001:9001 --name mosquitto eclipse-mosquitto:latest
+
+# Run the MQTT Bridge
+java -jar build/libs/MQTTBridge.jar http://localhost:5000/eventhub events=EventA,EventB tcp://localhost:1883
+
+# Subscribe to MQTT topics to see forwarded events
+mosquitto_sub -h localhost -t "signalr/#" -v
+```
+
+**Features:**
+- ✅ Subscribes to SignalR events
+- ✅ Publishes events to MQTT topics with prefix `signalr/<event-name>`
+- ✅ Automatic reconnection with 2-second pause on SignalR connection failure
+- ✅ Automatic MQTT reconnection
+- ✅ QoS 1 for reliable message delivery
+- ✅ Graceful shutdown handling
+
 ## Project Structure
 
 ```
 ├── src/main/java/com/example/signalr/
-│   └── SignalRSubscribe.java          # Java SignalR client
+│   ├── SignalRSubscribe.java          # Java SignalR client
+│   └── MQTTBridge.java                # MQTT Bridge (SignalR → MQTT)
 ├── server/
 │   ├── SignalRServer/
 │   │   ├── Program.cs                 # Server entry point
